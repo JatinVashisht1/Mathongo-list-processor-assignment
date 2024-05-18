@@ -14,9 +14,10 @@ app.use("/list", listRouter);
 const expressErrorHandler = (error, req, res, next) => {
   console.error(error);
 
-  return res
-    .status(HTTPStatusCodes.INTERNAL_SERVER_ERROR)
-    .json({ success: false, message: "Something went wrong." });
+  const statusCode = error.status ?? 500;
+  const errorMessage = error.message ?? "Something went wrong.";
+
+  return res.status(statusCode).json({ success: false, message: errorMessage });
 };
 
 app.use(expressErrorHandler);

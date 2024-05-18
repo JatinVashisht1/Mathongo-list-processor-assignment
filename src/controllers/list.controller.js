@@ -55,19 +55,10 @@ export const createList = async (request, response, next) => {
       .status(HTTPStatusCodes.CREATED)
       .json({ success: true, message: "List schema created successfully." });
   } catch (error) {
-    if (error instanceof RecordAlreadyExistError) {
-      return response.status(HTTPStatusCodes.CONFLICT).json({
-        success: false,
-        message: error.message,
-      });
-    }
-
-    if (error instanceof RecordNotExistError) {
-      return response.status(HTTPStatusCodes.NOT_FOUND).json({
-        success: false,
-        message: error.message,
-      });
-    }
+    console.error(
+      `controllers/list.controller.js: Error while processing POST /list request`,
+      error.message
+    );
 
     next(error, request, response);
   }
