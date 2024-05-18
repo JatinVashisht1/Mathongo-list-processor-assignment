@@ -1,15 +1,15 @@
 import express from "express";
-import { ErrorRequestHandler } from "express";
-import listRouter from "./routes/list-router";
-import { HTTPStatusCodes } from "./utils/http-status-codes";
+import listRouter from "./routes/list-router.js";
+import { HTTPStatusCodes } from "./utils/http-status-codes.js";
 const app = express();
 
+app.use(express.json());
 app.use("/list", listRouter);
 
 /**
  * Error handler for any un-handled error.
  *
- * @type { ErrorRequestHandler }
+ * @type { express.ErrorRequestHandler }
  */
 const expressErrorHandler = (error, req, res, next) => {
   console.error(error);

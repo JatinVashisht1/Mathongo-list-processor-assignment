@@ -1,17 +1,17 @@
 import { Router } from "express";
 import multer from "multer";
-import { createList } from "../controllers/list-controller";
+import { createList } from "../controllers/list.controller.js";
 
-/** defines storage engine for for storing files, provides information about destination directory and filename */
+/** Defines storage engine for for storing files, provides information about destination directory and filename */
 const storage = multer.diskStorage({
-  destination: (_, _, callback) => callback(null, "../csv-files"),
-  filename: (_, file, callback) =>
-    callback(null, `${file.filename}-${Date.now()}-${Math.random() * 1e5}`),
+  destination: (_request, _file, callback) => callback(null, "../csv-files"),
+  filename: (request, _file, callback) =>
+    callback(null, `${request.body.listName}.csv`),
 });
 
 const upload = multer({ storage });
 const listRouter = Router();
 
-listRouter.post("/", upload, createList);
+listRouter.post("/", createList);
 
 export default listRouter;
