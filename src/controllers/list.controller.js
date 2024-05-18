@@ -4,8 +4,6 @@ import {
   createCustomPropertiesService,
   createListService,
 } from "../services/list.service.js";
-import { RecordAlreadyExistError } from "../utils/errors/RecordAlreadyExistError.js";
-import { RecordNotExistError } from "../utils/errors/RecordNotExistError.js";
 
 /**
  * Controller for POST '/list' route.
