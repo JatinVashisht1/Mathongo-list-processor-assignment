@@ -63,7 +63,7 @@ export const createList = async (request, response, next) => {
     }
 
     if (error instanceof RecordNotExistError) {
-      return response.status(HTTPStatusCodes.CONFLICT).json({
+      return response.status(HTTPStatusCodes.NOT_FOUND).json({
         success: false,
         message: error.message,
       });
