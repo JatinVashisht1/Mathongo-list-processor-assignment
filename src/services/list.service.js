@@ -99,11 +99,13 @@ export const processCSVFile = async ({ csvBuffer, listName }) => {
     },
     {
       failed: 0,
-      active: 0,
+      total: 0,
       completed: 0,
       reasons: [],
     }
   );
+
+  let entriesCount = 0;
 
   readableStream
     .pipe(csvParser())
@@ -111,6 +113,8 @@ export const processCSVFile = async ({ csvBuffer, listName }) => {
       const jobData = { userData: data, listId: listDbModel._id };
 
       if (!Object.keys(data)?.length) return;
+
+      entriesCount++;
 
       await addListProcessingJob(jobData);
     })
@@ -120,4 +124,13 @@ export const processCSVFile = async ({ csvBuffer, listName }) => {
 
       throw error;
     });
+
+  await ListModel.updateOne(
+    {
+      name: listName,
+    },
+    {
+      total: entriesCount,
+    }
+  );
 };

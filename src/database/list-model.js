@@ -8,7 +8,7 @@ const listSchema = new Schema(
       unique: true,
     },
     path: String,
-    active: {
+    total: {
       type: Number,
       default: 0,
     },
