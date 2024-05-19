@@ -54,3 +54,24 @@ export const createCustomPropertiesService = async ({
 
   await PropertyModel.create(customPropertyDbModelList);
 };
+
+/**
+ * Service to update path field of a list record.
+ *
+ * @param {object} param0 Object required to update file path.
+ * @param {string} param0.name Name of list to update.
+ * @param {string} param0.name Path of stored csv file
+ */
+export const updateFilePath = async ({ name, path }) => {
+  const updateFilePathResult = await ListModel.updateOne(
+    { name },
+    { path }
+  ).exec();
+
+  if (
+    !updateFilePathResult.acknowledged ||
+    !updateFilePathResult.matchedCount
+  ) {
+    throw new RecordNotExistError(`No file list with name ${name} exist.`);
+  }
+};

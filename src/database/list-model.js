@@ -7,10 +7,7 @@ const listSchema = new Schema(
       required: true,
       unique: true,
     },
-    path: {
-      type: String,
-      required: true,
-    },
+    path: String,
   },
   {
     timestamps: true,
