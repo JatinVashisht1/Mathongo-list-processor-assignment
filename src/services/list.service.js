@@ -1,7 +1,10 @@
+import { addListProcessingJob } from "../background-jobs/queue-manager.js";
 import ListModel from "../database/list-model.js";
 import PropertyModel from "../database/property-model.js";
 import { RecordAlreadyExistError } from "../utils/errors/RecordAlreadyExistError.js";
 import { RecordNotExistError } from "../utils/errors/RecordNotExistError.js";
+import { Readable } from "stream";
+import csvParser from "csv-parser";
 
 /**
  * Service function responsible for inserting new record into `lists` collection.
@@ -62,7 +65,7 @@ export const createCustomPropertiesService = async ({
  * @param {string} param0.name Name of list to update.
  * @param {string} param0.name Path of stored csv file
  */
-export const updateFilePath = async ({ name, path }) => {
+export const updateFilePathService = async ({ name, path }) => {
   const updateFilePathResult = await ListModel.updateOne(
     { name },
     { path }
@@ -74,4 +77,47 @@ export const updateFilePath = async ({ name, path }) => {
   ) {
     throw new RecordNotExistError(`No file list with name ${name} exist.`);
   }
+};
+
+export const processCSVFile = async ({ csvBuffer, listName }) => {
+  const readableStream = new Readable({
+    read() {
+      this.push(csvBuffer);
+      this.push(null);
+    },
+  });
+
+  const listDbModel = await ListModel.findOne({ name: listName });
+
+  if (!listDbModel) {
+    throw RecordNotExistError(`List with name ${listName} not exist.`);
+  }
+
+  await ListModel.updateOne(
+    {
+      name: listName,
+    },
+    {
+      failed: 0,
+      active: 0,
+      completed: 0,
+      reasons: [],
+    }
+  );
+
+  readableStream
+    .pipe(csvParser())
+    .on("data", async (data) => {
+      const jobData = { userData: data, listId: listDbModel._id };
+
+      if (!Object.keys(data)?.length) return;
+
+      await addListProcessingJob(jobData);
+    })
+    .on("end", () => console.info("Finished reading file"))
+    .on("error", (error) => {
+      console.error("error while reading file ", error.message);
+
+      throw error;
+    });
 };

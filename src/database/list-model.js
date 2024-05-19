@@ -8,6 +8,19 @@ const listSchema = new Schema(
       unique: true,
     },
     path: String,
+    active: {
+      type: Number,
+      default: 0,
+    },
+    completed: {
+      type: Number,
+      default: 0,
+    },
+    failed: {
+      type: Number,
+      default: 0,
+    },
+    reasons: [String],
   },
   {
     timestamps: true,

@@ -1,7 +1,7 @@
 import mongoose, { Schema, model } from "mongoose";
 
 const customPropertySchema = new Schema({
-  listId: {
+  propertyId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
@@ -23,7 +23,6 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: true,
-    unique: true,
   },
   customProperties: {
     type: [customPropertySchema],
@@ -31,6 +30,6 @@ const userSchema = new Schema({
   },
 });
 
-const propertyModel = model("property", userSchema);
+const userModel = model("user", userSchema);
 
-export default propertyModel;
+export default userModel;

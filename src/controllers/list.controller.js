@@ -4,10 +4,17 @@ import { HTTPStatusCodes } from "../utils/http-status-codes.js";
 import {
   createCustomPropertiesService,
   createListService,
-  updateFilePath,
+  processCSVFile,
+  updateFilePathService,
 } from "../services/list.service.js";
-import csv from "csv-parser";
+import csvParser from "csv-parser";
 import listModel from "../database/list-model.js";
+import {
+  addListProcessingJob,
+  listProcessingQueue,
+} from "../background-jobs/queue-manager.js";
+import { Job } from "bullmq";
+import { Readable } from "stream";
 
 /**
  * Controller for POST '/list' route.
@@ -91,13 +98,15 @@ export const uploadListController = async (request, response, next) => {
 
     const path = `${destination}/${fileName}`;
 
-    await updateFilePath({ name, path });
+    await updateFilePathService({ name, path });
+
+    await processCSVFile({ csvBuffer: csvFile.buffer, listName: name });
 
     return response
       .status(HTTPStatusCodes.OK)
       .json({ success: true, message: "File uploaded successfully" });
   } catch (error) {
-    console.log(
+    console.error(
       `controlelrs/list.controller.js: Error prosessing upload list request, ${error.message}`
     );
 
