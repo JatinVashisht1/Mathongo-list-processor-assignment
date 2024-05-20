@@ -11,6 +11,6 @@ const listRouter = Router();
 
 listRouter.post("/", createList);
 listRouter.post("/upload", upload.single("csvFile"), uploadListController);
-listRouter.get("/status", getListStatusController);
+listRouter.get("/status/:name", getListStatusController);
 
 export default listRouter;
