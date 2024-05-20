@@ -118,9 +118,9 @@ export const uploadListController = async (request, response, next) => {
  * Controller / Handler to get status of processing of a list
  * @type {express.RequestHandler}
  */
-export const getListStatus = async (request, response, next) => {
+export const getListStatusController = async (request, response, next) => {
   try {
-    const { name } = request.body;
+    const { name } = request.params;
 
     if (!name) {
       return response.status(HTTPStatusCodes.BAD_REQUEST).json({
