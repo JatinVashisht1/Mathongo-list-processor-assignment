@@ -6,10 +6,8 @@ import listModel from "../database/list-model.js";
 const redisHost = process.env.REDIS_HOST ?? "localhost";
 const redisPort = process.env.REDIS_PORT ?? 6379;
 
-const ioRedisConnection = new IORedis({
+const ioRedisConnection = new IORedis(redisHost, {
   maxRetriesPerRequest: null,
-  host: redisHost,
-  port: redisPort,
 });
 
 const listProcessingStatusMap = {};
@@ -68,7 +66,7 @@ function logWorkerEvents(worker) {
   });
 
   worker.on("error", (error) => {
-    strapi.log.error(`error occurred when executing jobs: ${error}`);
+    console.error(`error occurred when executing jobs: ${error}`);
   });
 }
 
