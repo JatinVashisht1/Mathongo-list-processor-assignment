@@ -114,6 +114,47 @@ export const uploadListController = async (request, response, next) => {
   }
 };
 
+/**
+ * Controller / Handler to get status of processing of a list
+ * @type {express.RequestHandler}
+ */
+export const getListStatus = async (request, response, next) => {
+  try {
+    const { name } = request.body;
+
+    if (!name) {
+      return response.status(HTTPStatusCodes.BAD_REQUEST).json({
+        succes: false,
+        message: "name is required field",
+      });
+    }
+
+    const listDbModel = await listModel.findOne({
+      name,
+    });
+
+    if (!listDbModel) {
+      return response.status(HTTPStatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: "List not exist",
+      });
+    }
+
+    const status = {
+      total: listDbModel.total,
+      completed: listDbModel.completed,
+      errors: JSON.stringify(listDbModel.reasons),
+    };
+
+    return response.status(HTTPStatusCodes.OK).json({
+      success: true,
+      message: status,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const checkCustomPropertyListValid = (customPropertyList) => {
   if (!Array.isArray(customPropertyList)) {
     return false;
